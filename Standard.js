@@ -94,8 +94,12 @@ function shiftThisMonth(params)
 /********* X. List Totals (DashCards Replacement) ***********/
 function computeListTotalOnMovedCard(notification)
 {
-    computeListTotalById(notification.fromListId);
-    computeListTotalById(notification.toListId);
+    //Indicates a card was moved
+    if(notification.action.data.listAfter)
+    {
+        computeListTotalById(new List(notification.action.data.listAfter));
+        computeListTotalById(new List(notification.action.data.listBefore));
+    }
 }
 
 /******** Tools and Utilities *******/
@@ -107,7 +111,7 @@ function computeListTotal(board_id,list_name)
 
 function computeListTotalById(list)
 {
-    var list_name = list.id;
+    var list_name = list.name();
     var num_exp = new RegExp("(.+) \\([0-9]+\\)","gi")
 
     try
@@ -119,5 +123,6 @@ function computeListTotalById(list)
 
     catch(e)
     {
+        writeInfo_("Error computing list total: "+e);
     }
 }
