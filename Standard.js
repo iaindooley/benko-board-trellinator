@@ -11,7 +11,7 @@ function remindOnDueDate(notification)
 //Called by TriggerLib on the due date
 function postReminder(notification)
 {
-    Card(notification.idCard).postComment("@"+notification.boardName+" you asked me to remind you about this");
+    new Card(notification.idCard).postComment("@"+notification.boardName+" you asked me to remind you about this");
 }
 
 /***** 2. .Remind to Follow up *******/
@@ -19,7 +19,7 @@ function postReminder(notification)
 function remindToFollowUp(notification)
 {
     if(notification.listName == "Follow Up")
-        Card(notification.cardId).setDue("in 3 working days");
+        new Card(notification.cardId).setDue("in 3 working days");
 }
 
 /****** 3. .Make due dates Priority *****/
@@ -33,7 +33,7 @@ function makeDueDatePriority(notification)
 
 function moveCardToPriority(notification)
 {
-    Card(notification.cardId).moveTo({list:"Priority",position:2});
+    new Card(notification.cardId).moveTo({list:"Priority",position:2});
 }
 
 /****** 4. .Shift tomorrow to today *****/
@@ -46,7 +46,7 @@ function recurAt4amDaily(board_id)
 
 function shiftTomorrowToToday(params)
 {
-    Board(params.board_id).moveAllCards({from: new RegExp("Tomorrow \\([0-9]+\\)"),to: new RegExp("Today \\([0-9]+\\)")});
+    new Board(params.board_id).moveAllCards({from: new RegExp("Tomorrow \\([0-9]+\\)"),to: new RegExp("Today \\([0-9]+\\)")});
     computeListTotal(params.board_id,"Tomorrow");
     computeListTotal(params.board_id,"Today");
 }
@@ -62,9 +62,9 @@ function recurAtMidnightWeekly(board_id)
 function shiftThisWeek(params)
 {
     //Move from This week to if I have time today
-    Board(params.board_id).moveAllCards({from: new RegExp("This week \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+    new Board(params.board_id).moveAllCards({from: new RegExp("This week \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
     //Move from Next week to This week
-    Board(params.board_id).moveAllCards({from: new RegExp("Next week \\([0-9]+\\)"),to: new RegExp("This week \\([0-9]+\\)")});
+    new Board(params.board_id).moveAllCards({from: new RegExp("Next week \\([0-9]+\\)"),to: new RegExp("This week \\([0-9]+\\)")});
     //Update the list totals
     computeListTotal(params.board_id,"This week");
     computeListTotal(params.board_id,"Next week");
@@ -82,9 +82,9 @@ function recurAt4amMonthly(board_id)
 function shiftThisMonth(params)
 {
     //Move from This month to if I have time today
-    Board(params.board_id).moveAllCards({from: new RegExp("This month \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+    new Board(params.board_id).moveAllCards({from: new RegExp("This month \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
     //Move from Next month to This month
-    Board(params.board_id).moveAllCards({from: new RegExp("Next month \\([0-9]+\\)"),to: new RegExp("This month \\([0-9]+\\)")});
+    new Board(params.board_id).moveAllCards({from: new RegExp("Next month \\([0-9]+\\)"),to: new RegExp("This month \\([0-9]+\\)")});
     //Update the list totals
     computeListTotal(params.board_id,"This month");
     computeListTotal(params.board_id,"Next month");
@@ -105,7 +105,7 @@ function computeListTotalOnMovedCard(notification)
 /******** Tools and Utilities *******/
 function computeListTotal(board_id,list_name)
 {
-    var list = Board({id: board_id}).list({name: new RegExp(list_name+" \\([0-9]+\\)")});
+    var list = new Board({id: board_id}).list({name: new RegExp(list_name+" \\([0-9]+\\)")});
     computeListTotalById(list);
 }
 
