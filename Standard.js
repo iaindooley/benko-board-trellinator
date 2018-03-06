@@ -1,18 +1,21 @@
 /***** 1. .Remind on due date ********/
+/****** 3. .Make due dates Priority *****/
 //Call when a due date is added to a card
-function remindOnDueDate(notification,signature)
+function dueDateAddedToCard(notification,signature)
 {
-    var trigger_signature = signature+" "+notification.action.display.entities.card.id;
+    var trigger_signature = signature+notification.action.display.entities.card.id;
     clear(trigger_signature);
 
     if(notification.action.data.card.due)
-        push(new Date(notification.action.data.card.due),{functionName: postReminder,parameters: notification},trigger_signature);
+        push(new Date(notification.action.data.card.due),{functionName: "remindOnDueDate",parameters: notification},trigger_signature);
 }
 //Called by TriggerLib on the due date
-function postReminder(notification)
+function remindOnDueDate(notification)
 {
     var card = new Card({id: notification.action.display.entities.card.id});
-
+    card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
+    computeListTotal(notification.model.id,"Priority");
+  
     if(card.labels().filterByName("Remind").length())
         card.postComment("@"+notification.action.memberCreator.username+" you asked me to remind you about this");
 }
@@ -23,20 +26,6 @@ function remindToFollowUp(notification)
 {
     if(notification.listName == "Follow Up")
         new Card(notification.cardId).setDue("in 3 working days");
-}
-
-/****** 3. .Make due dates Priority *****/
-//Call when a due date is added to a card
-function makeDueDatePriority(notification)
-{
-    var trigger_signature = notification.cardId+"makeDueDatePriority";
-    TriggerLib.clear(trigger_signature);
-    TriggerLib.push(notification.dueDate,{functionName: moveCardToPriority,parameters: notification},trigger_signature);
-}
-
-function moveCardToPriority(notification)
-{
-    new Card(notification.cardId).moveTo({list:"Priority",position:2});
 }
 
 /****** 4. .Shift tomorrow to today *****/
