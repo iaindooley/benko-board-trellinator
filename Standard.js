@@ -1,53 +1,92 @@
-var master_benko_board_id = "5a8fbd296df7bb170ae53f15";
+var master_benko_board_id = "58f36ea57cdd8c5334a1ffc9";
 //MANUALLY INITIALISE THESE - UPDATE THE BOARD ID FIRST
 function recurAt4amDaily()
 {
-    push(dateFourAmTomorrow(),{functionName: shiftTomorrowToToday,parameters: {board_id: master_benko_board_id}},"recurAt4amDaily");
+    push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: {id: master_benko_board_id}},"recurAt4amDaily");
 }
 
 function recurAtMidnightWeekly()
 {
-    push(thisSunday1159pm(),{functionName: shiftThisWeek,parameters: {board_id: board_id}},"recurAtMidnightWeekly");
+    push(thisSunday1159pm(),{functionName: "shiftThisWeek",parameters: {id: master_benko_board_id}},"recurAtMidnightWeekly");
 }
 
 function recurAt4amMonthly(board_id)
 {
-    push(fourAmOnTheFirst(),{functionName: shiftThisMonth,parameters: {board_id: master_benko_board_id}},"recurAt4amMonthly");
+    push(fourAmOnTheFirst(),{functionName: "shiftThisMonth",parameters: {id: master_benko_board_id}},"recurAt4amMonthly");
 }
 
 /***** FUNCTIONS to move priorities over to the left *****/
 function shiftTomorrowToToday(params)
 {
-    new Board(params.board_id).moveAllCards({from: new RegExp("Tomorrow \\([0-9]+\\)"),to: new RegExp("Today \\([0-9]+\\)")});
-    computeListTotal(params.board_id,"Tomorrow");
-    computeListTotal(params.board_id,"Today");
-    push(dateFourAmTomorrow(),{functionName: shiftTomorrowToToday,parameters: params},"recurAt4amDaily");
+    try
+    {
+        new Board(params).moveAllCards({from: new RegExp("Tomorrow \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+    }
+  
+    catch(e)
+    {
+    }
+  
+    computeListTotal(params.id,"Tomorrow");
+    computeListTotal(params.id,"If I have time today");
+    push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: params},"recurAt4amDaily");
 }
 
 function shiftThisWeek(params)
 {
-    //Move from This week to if I have time today
-    new Board(params.board_id).moveAllCards({from: new RegExp("This week \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
-    //Move from Next week to This week
-    new Board(params.board_id).moveAllCards({from: new RegExp("Next week \\([0-9]+\\)"),to: new RegExp("This week \\([0-9]+\\)")});
+    try
+    {
+        //Move from This week to if I have time today
+        new Board(params).moveAllCards({from: new RegExp("This week \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+    }
+  
+    catch(e)
+    {
+    }
+  
+    try
+    {
+        //Move from Next week to This week
+        new Board(params).moveAllCards({from: new RegExp("Next week \\([0-9]+\\)"),to: new RegExp("This week \\([0-9]+\\)")});
+    }
+  
+    catch(e)
+    {
+    }
+
     //Update the list totals
-    computeListTotal(params.board_id,"This week");
-    computeListTotal(params.board_id,"Next week");
-    computeListTotal(params.board_id,"If I have time today");
-    push(thisSunday1159pm(),{functionName: shiftThisWeek,parameters: {board_id: board_id}},"recurAtMidnightWeekly");
+    computeListTotal(params.id,"This week");
+    computeListTotal(params.id,"Next week");
+    computeListTotal(params.id,"If I have time today");
+    push(thisSunday1159pm(),{functionName: "shiftThisWeek",parameters: params},"recurAtMidnightWeekly");
 }
 
 function shiftThisMonth(params)
 {
-    //Move from This month to if I have time today
-    new Board(params.board_id).moveAllCards({from: new RegExp("This month \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
-    //Move from Next month to This month
-    new Board(params.board_id).moveAllCards({from: new RegExp("Next month \\([0-9]+\\)"),to: new RegExp("This month \\([0-9]+\\)")});
+    try
+    {
+        //Move from This month to if I have time today
+        new Board(params).moveAllCards({from: new RegExp("This month \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+    }
+  
+    catch(e)
+    {
+    }
+  
+    try
+    {
+        //Move from Next month to This month
+        new Board(params).moveAllCards({from: new RegExp("Next month \\([0-9]+\\)"),to: new RegExp("This month \\([0-9]+\\)")});
+    }
+  
+    catch(e)
+    {
+    }
     //Update the list totals
-    computeListTotal(params.board_id,"This month");
-    computeListTotal(params.board_id,"Next month");
-    computeListTotal(params.board_id,"If I have time today");
-    push(fourAmOnTheFirst(),{functionName: shiftThisMonth,parameters: {board_id: master_benko_board_id}},"recurAt4amMonthly");
+    computeListTotal(params.id,"This month");
+    computeListTotal(params.id,"Next month");
+    computeListTotal(params.id,"If I have time today");
+    push(fourAmOnTheFirst(),{functionName: "shiftThisMonth",parameters: params},"recurAt4amMonthly");
 }
 
 /***** TRIGGER on updated card ******/
@@ -56,20 +95,30 @@ function updateCardDispatch(notification,signature)
 {
     //Indicates a due date was added to the card
     if(notification.action.data.card.due)
-        remindOnDueDate(notification,signature);
+        scheduleDueDateReminder(notification,signature);
     //Indicates a card was moved
     else if(notification.action.data.listAfter)
     {
         //Update the list heading totals
         computeListTotals(notification,signature);
         //Check if the card was moved into Follow Up and add a due date if so
-        remindToFollowUp(notification,signature);
+        remindToFollowUp(notification.action.display.entities.card,notification.action.data.listAfter,notification,signature);
     }
+    //Update totals if list changed
+    else
+        computeListTotalById(new List(notification.action.data.list));
+}
+
+/***** TRIGGER on created or copied card *****/
+function computeListTotalsForCardChanges(notification,signature)
+{
+    computeListTotalById(new List(notification.action.data.list));
+    remindToFollowUp(notification.action.display.entities.card,notification.action.data.list,notification,signature);
 }
 
 /***** 1. .Remind on due date ********/
 /****** 3. .Make due dates Priority *****/
-function remindOnDueDate(notification,signature)
+function scheduleDueDateReminder(notification,signature)
 {
     var trigger_signature = signature+notification.action.display.entities.card.id;
     clear(trigger_signature);
@@ -77,16 +126,19 @@ function remindOnDueDate(notification,signature)
 }
 
 /***** 2. .Remind to Follow up *******/
-function remindToFollowUp(notification,signature)
+function remindToFollowUp(card,list,notification,signature)
 {
-    var follow_up_regex = new RegExp("Follow Up \\([0-9]+\\)");
+    var follow_up_regex = new RegExp("Follow up \\([0-9]+\\)");
 
-    if(follow_up_regex.test(notification.action.data.listAfter))
+    if(follow_up_regex.test(list.name))
     {
         var current_date = new Date();
         var minutes = 72*60;
         var newDateObj = new Date(current_date.getTime() + minutes*60000);
-        new Card(notification.action.display.entities.card.id).setDue(newDateObj.toISOString());
+        new Card(card).setDue(newDateObj.toISOString());
+        var trigger_signature = signature+card.id;
+        clear(trigger_signature);
+        push(new Date(newDateObj),{functionName: "remindOnDueDate",parameters: notification},trigger_signature);
     }
 }
 
@@ -107,7 +159,7 @@ function remindOnDueDate(notification)
     computeListTotal(notification.model.id,"Priority");
   
     if(card.labels().filterByName("Remind").length())
-        card.postComment("@"+notification.action.memberCreator.username+" you asked me to remind you about this");
+        card.postComment("@"+notification.model.name+" you asked me to remind you about this");
 }
 
 /******** Tools and Utilities *******/
@@ -138,7 +190,7 @@ function computeListTotalById(list)
 function dateFourAmTomorrow()
 {
     var ret  = new Date();
-    ret.setDate(now.getDate() + 1)
+    ret.setDate(ret.getDate() + 1)
     ret.setHours(4);
     ret.setMinutes(0);
     ret.setMilliseconds(0);
