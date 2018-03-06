@@ -1,54 +1,27 @@
-/***** 1. .Remind on due date ********/
-/****** 3. .Make due dates Priority *****/
-//Call when a due date is added to a card
-function dueDateAddedToCard(notification,signature)
+var master_benko_board_id = "5a8fbd296df7bb170ae53f15";
+//MANUALLY INITIALISE THESE - UPDATE THE BOARD ID FIRST
+function recurAt4amDaily()
 {
-    var trigger_signature = signature+notification.action.display.entities.card.id;
-    clear(trigger_signature);
-
-    if(notification.action.data.card.due)
-        push(new Date(notification.action.data.card.due),{functionName: "remindOnDueDate",parameters: notification},trigger_signature);
-}
-//Called by TriggerLib on the due date
-function remindOnDueDate(notification)
-{
-    var card = new Card({id: notification.action.display.entities.card.id});
-    card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
-    computeListTotal(notification.model.id,"Priority");
-  
-    if(card.labels().filterByName("Remind").length())
-        card.postComment("@"+notification.action.memberCreator.username+" you asked me to remind you about this");
+    push(dateFourAmTomorrow(),{functionName: shiftTomorrowToToday,parameters: {board_id: master_benko_board_id}},"recurAt4amDaily");
 }
 
-/***** 2. .Remind to Follow up *******/
-//Call when a card is moved into a list
-function remindToFollowUp(notification)
+function recurAtMidnightWeekly()
 {
-    if(notification.listName == "Follow Up")
-        new Card(notification.cardId).setDue("in 3 working days");
+    push(thisSunday1159pm(),{functionName: shiftThisWeek,parameters: {board_id: board_id}},"recurAtMidnightWeekly");
 }
 
-/****** 4. .Shift tomorrow to today *****/
-//Need to run this to establish execution ... somehow!
-//The parameter passed in here, should be the board name for which this is being established
-function recurAt4amDaily(board_id)
+function recurAt4amMonthly(board_id)
 {
-    TriggerLib.push("4am tomorrow",{functionName: shiftTomorrowToToday,parameters: {board_id: board_id}},"recurAt4amDaily");
+    push(fourAmOnTheFirst(),{functionName: shiftThisMonth,parameters: {board_id: master_benko_board_id}},"recurAt4amMonthly");
 }
 
+/***** FUNCTIONS to move priorities over to the left *****/
 function shiftTomorrowToToday(params)
 {
     new Board(params.board_id).moveAllCards({from: new RegExp("Tomorrow \\([0-9]+\\)"),to: new RegExp("Today \\([0-9]+\\)")});
     computeListTotal(params.board_id,"Tomorrow");
     computeListTotal(params.board_id,"Today");
-}
-
-/******* 5. .Shift this week ********/
-//Need to run this to establish execution ... somehow!
-//The parameter passed in here, should be the board name for which this is being established
-function recurAtMidnightWeekly(board_id)
-{
-    TriggerLib.push("this sunday at 11:59pm",{functionName: shiftThisWeek,parameters: {board_id: board_id}},"recurAtMidnightWeekly");
+    push(dateFourAmTomorrow(),{functionName: shiftTomorrowToToday,parameters: params},"recurAt4amDaily");
 }
 
 function shiftThisWeek(params)
@@ -61,14 +34,7 @@ function shiftThisWeek(params)
     computeListTotal(params.board_id,"This week");
     computeListTotal(params.board_id,"Next week");
     computeListTotal(params.board_id,"If I have time today");
-}
-
-/******** 6. .Shift this month *********/
-//Need to run this to establish execution ... somehow!
-//The parameter passed in here, should be the board name for which this is being established
-function recurAt4amMonthly(board_id)
-{
-    TriggerLib.push("4am on the first of next month",{functionName: shiftThisMonth,parameters: {board_id: board_id}},"recurAt4amMonthly");
+    push(thisSunday1159pm(),{functionName: shiftThisWeek,parameters: {board_id: board_id}},"recurAtMidnightWeekly");
 }
 
 function shiftThisMonth(params)
@@ -81,17 +47,67 @@ function shiftThisMonth(params)
     computeListTotal(params.board_id,"This month");
     computeListTotal(params.board_id,"Next month");
     computeListTotal(params.board_id,"If I have time today");
+    push(fourAmOnTheFirst(),{functionName: shiftThisMonth,parameters: {board_id: master_benko_board_id}},"recurAt4amMonthly");
+}
+
+/***** TRIGGER on updated card ******/
+//updateCard
+function updateCardDispatch(notification,signature)
+{
+    //Indicates a due date was added to the card
+    if(notification.action.data.card.due)
+        remindOnDueDate(notification,signature);
+    //Indicates a card was moved
+    else if(notification.action.data.listAfter)
+    {
+        //Update the list heading totals
+        computeListTotals(notification,signature);
+        //Check if the card was moved into Follow Up and add a due date if so
+        remindToFollowUp(notification,signature);
+    }
+}
+
+/***** 1. .Remind on due date ********/
+/****** 3. .Make due dates Priority *****/
+function remindOnDueDate(notification,signature)
+{
+    var trigger_signature = signature+notification.action.display.entities.card.id;
+    clear(trigger_signature);
+    push(new Date(notification.action.data.card.due),{functionName: "remindOnDueDate",parameters: notification},trigger_signature);
+}
+
+/***** 2. .Remind to Follow up *******/
+function remindToFollowUp(notification,signature)
+{
+    var follow_up_regex = new RegExp("Follow Up \\([0-9]+\\)");
+
+    if(follow_up_regex.test(notification.action.data.listAfter))
+    {
+        var current_date = new Date();
+        var minutes = 72*60;
+        var newDateObj = new Date(current_date.getTime() + minutes*60000);
+        new Card(notification.action.display.entities.card.id).setDue(newDateObj.toISOString());
+    }
 }
 
 /********* X. List Totals (DashCards Replacement) ***********/
-function computeListTotalOnMovedCard(notification)
+function computeListTotals(notification,signature)
 {
-    //Indicates a card was moved
-    if(notification.action.data.listAfter)
-    {
-        computeListTotalById(new List(notification.action.data.listAfter));
-        computeListTotalById(new List(notification.action.data.listBefore));
-    }
+    computeListTotalById(new List(notification.action.data.listAfter));
+    computeListTotalById(new List(notification.action.data.listBefore));
+}
+
+//Called by Trigger on the due date
+/***** 1. .Remind on due date ********/
+/****** 3. .Make due dates Priority *****/
+function remindOnDueDate(notification)
+{
+    var card = new Card({id: notification.action.display.entities.card.id});
+    card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
+    computeListTotal(notification.model.id,"Priority");
+  
+    if(card.labels().filterByName("Remind").length())
+        card.postComment("@"+notification.action.memberCreator.username+" you asked me to remind you about this");
 }
 
 /******** Tools and Utilities *******/
@@ -117,4 +133,34 @@ function computeListTotalById(list)
     {
         writeInfo_("Error computing list total: "+e);
     }
+}
+
+function dateFourAmTomorrow()
+{
+    var ret  = new Date();
+    ret.setDate(now.getDate() + 1)
+    ret.setHours(4);
+    ret.setMinutes(0);
+    ret.setMilliseconds(0);
+    return ret;
+}
+
+function thisSunday1159pm()
+{
+    var ret = new Date();
+    ret.setDate(ret.getDate() + (7 - ret.getDay()));
+    ret.setHours(23);
+    ret.setMinutes(59);
+    ret.setMilliseconds(0);
+    return ret;
+}
+
+function fourAmOnTheFirst()
+{
+    var now = new Date();
+    var ret = new Date(now.getFullYear(), now.getMonth()+1, 1);
+    ret.setHours(4);
+    ret.setMinutes(0);
+    ret.setMilliseconds(0);
+    return ret;
 }
