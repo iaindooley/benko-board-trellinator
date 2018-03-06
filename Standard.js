@@ -25,10 +25,20 @@ function shiftTomorrowToToday(params)
   
     catch(e)
     {
+      writeInfo_("Caught exception moving all cards in shiftTomorrowToToday: "+e);
     }
   
-    computeListTotal(params.id,"Tomorrow");
-    computeListTotal(params.id,"If I have time today");
+    try
+    {
+        computeListTotal(params.id,"Tomorrow");
+        computeListTotal(params.id,"If I have time today");
+    }
+  
+    catch(e)
+    {
+      writeInfo_("Caught exception computing list totals: "+e);
+    }
+  
     push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: params},"recurAt4amDaily");
 }
 
