@@ -1,17 +1,20 @@
 /***** 1. .Remind on due date ********/
 //Call when a due date is added to a card
-function remindOnDueDate(notification)
+function remindOnDueDate(notification,signature)
 {
-    var trigger_signature = notification.cardId+"remindOnDueDate";
-    TriggerLib.clear(trigger_signature);
+    var trigger_signature = signature+" "+notification.action.display.entities.card.id;
+    clear(trigger_signature);
 
-    if(notification.cardLabels.indexOf("Remind") != -1)
-        TriggerLib.push(notification.dueDate,{functionName: postReminder,parameters: notification},trigger_signature);
+    if(notification.action.data.card.due)
+        push(new Date(notification.action.data.card.due),{functionName: postReminder,parameters: notification},trigger_signature);
 }
 //Called by TriggerLib on the due date
 function postReminder(notification)
 {
-    new Card(notification.idCard).postComment("@"+notification.boardName+" you asked me to remind you about this");
+    var card = new Card({id: notification.action.display.entities.card.id});
+
+    if(card.labels().filterByName("Remind").length())
+        card.postComment("@"+notification.action.memberCreator.username+" you asked me to remind you about this");
 }
 
 /***** 2. .Remind to Follow up *******/
