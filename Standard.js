@@ -143,11 +143,12 @@ function remindToFollowUp(card,list,notification,signature)
 
     if(follow_up_regex.test(list.name))
     {
-        new Card(card).setDue(Trigger.xDaysFromNow(3).toISOString());
+        var remind_on = Trigger.xDaysFromNow(3);
+        new Card(card).setDue(remind_on.toISOString());
         var trigger_signature = signature+card.id;
         clear(trigger_signature);
         var params = {board: notification.model,card: notification.action.display.entities.card};
-        push(new Date(newDateObj),{functionName: "remindOnDueDate",parameters: params},trigger_signature);
+        push(new Date(remind_on),{functionName: "remindOnDueDate",parameters: params},trigger_signature);
     }
 }
 
