@@ -10,13 +10,14 @@ eval(murphy.load(__dirname,"../../trellinator-libs/TrelloApi.js"));
 eval(murphy.load(__dirname,"../../trellinator-libs/TestConnector.js"));
 eval(murphy.load(__dirname,"../../trellinator-libs/IterableCollection.js"));
 eval(murphy.load(__dirname,"../../trellinator/TrigTest.js"));
+eval(murphy.load(__dirname,"../../trellinator/Supporting.js"));
 eval(murphy.load(__dirname,"../Standard.js"));
 eval(murphy.load(__dirname,"./sample_notifications.js"));
 TestConnector.test_base_dir = __dirname;
-triggerInit(__dirname);
 
-remindOnDueDate(new_date,md5("updateCardremindOnDueDate"));
-remindOnDueDate(updated_date,md5("updateCardremindOnDueDate"));
+triggerInit(__dirname);
+scheduleDueDateReminder(new_date,"newCardScheduleDueDatereminder");
+scheduleDueDateReminder(updated_date,"updateCardScheduleDueDatereminder");
 
 if(TrigTest.used_fixture_file_names.length != 2)
     console.log("Got the incorrect number of trigger fixture files");
@@ -43,5 +44,7 @@ function testTriggerFixture(datestr,index)
 }
 
 triggerInit(__dirname);
-postReminder(new_date,md5("updateCardremindOnDueDate"));
-
+var params = {board: new_date.model,card: new_date.action.data.card};
+remindOnDueDate(params,md5("updateCardremindOnDueDate"));
+var params = {board: updated_date.model,card: updated_date.action.data.card};
+remindOnDueDate(params,md5("updateCardremindOnDueDate"));
