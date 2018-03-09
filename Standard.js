@@ -132,7 +132,8 @@ function scheduleDueDateReminder(notification,signature)
 {
     var trigger_signature = signature+notification.action.display.entities.card.id;
     clear(trigger_signature);
-    push(new Date(notification.action.data.card.due),{functionName: "remindOnDueDate",parameters: notification},trigger_signature);
+    var params = {board: notification.model,card: notification.action.display.entities.card};
+    push(new Date(notification.action.data.card.due),{functionName: "remindOnDueDate",parameters: params},trigger_signature);
 }
 
 /***** 2. .Remind to Follow up *******/
@@ -142,13 +143,11 @@ function remindToFollowUp(card,list,notification,signature)
 
     if(follow_up_regex.test(list.name))
     {
-        var current_date = new Date();
-        var minutes = 72*60;
-        var newDateObj = new Date(current_date.getTime() + minutes*60000);
-        new Card(card).setDue(newDateObj.toISOString());
+        new Card(card).setDue(Trigger.xDaysFromNow(3).toISOString());
         var trigger_signature = signature+card.id;
         clear(trigger_signature);
-        push(new Date(newDateObj),{functionName: "remindOnDueDate",parameters: notification},trigger_signature);
+        var params = {board: notification.model,card: notification.action.display.entities.card};
+        push(new Date(newDateObj),{functionName: "remindOnDueDate",parameters: params},trigger_signature);
     }
 }
 
@@ -162,14 +161,14 @@ function computeListTotals(notification,signature)
 //Called by Trigger on the due date
 /***** 1. .Remind on due date ********/
 /****** 3. .Make due dates Priority *****/
-function remindOnDueDate(notification)
+function remindOnDueDate(board,card)
 {
-    var card = new Card({id: notification.action.display.entities.card.id});
+    var card = new Card(card);
     card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
-    computeListTotal(notification.model.id,"Priority");
+    computeListTotal(board.id,"Priority");
   
     if(card.labels().filterByName("Remind").length())
-        card.postComment("@"+notification.model.name+" you asked me to remind you about this");
+        card.postComment("@"+board.name+" you asked me to remind you about this");
 }
 
 /******** Tools and Utilities *******/
