@@ -161,14 +161,14 @@ function computeListTotals(notification,signature)
 //Called by Trigger on the due date
 /***** 1. .Remind on due date ********/
 /****** 3. .Make due dates Priority *****/
-function remindOnDueDate(board,card)
+function remindOnDueDate(params,signature)
 {
-    var card = new Card(card);
+    var card = new Card(params.card);
     card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
-    computeListTotal(board.id,"Priority");
+    computeListTotal(params.board.id,"Priority");
   
     if(card.labels().filterByName("Remind").length())
-        card.postComment("@"+board.name+" you asked me to remind you about this");
+        card.postComment("@"+params.board.name+" you asked me to remind you about this");
 }
 
 /******** Tools and Utilities *******/
