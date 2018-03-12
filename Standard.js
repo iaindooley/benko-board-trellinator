@@ -16,7 +16,7 @@ function recurAt4amMonthly(board_id)
 }
 
 /***** FUNCTIONS to move priorities over to the left *****/
-function shiftTomorrowToToday(params)
+function shiftTomorrowToToday(params,signature)
 {
     try
     {
@@ -39,10 +39,10 @@ function shiftTomorrowToToday(params)
       writeInfo_("Caught exception computing list totals: "+e);
     }
   
-    push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: params},"recurAt4amDaily");
+    push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: params},signature);
 }
 
-function shiftThisWeek(params)
+function shiftThisWeek(params,signature)
 {
     try
     {
@@ -68,10 +68,10 @@ function shiftThisWeek(params)
     computeListTotal(params.id,"This week");
     computeListTotal(params.id,"Next week");
     computeListTotal(params.id,"If I have time today");
-    push(thisSunday1159pm(),{functionName: "shiftThisWeek",parameters: params},"recurAtMidnightWeekly");
+    push(thisSunday1159pm(),{functionName: "shiftThisWeek",parameters: params},signature);
 }
 
-function shiftThisMonth(params)
+function shiftThisMonth(params,signature)
 {
     try
     {
@@ -96,7 +96,7 @@ function shiftThisMonth(params)
     computeListTotal(params.id,"This month");
     computeListTotal(params.id,"Next month");
     computeListTotal(params.id,"If I have time today");
-    push(fourAmOnTheFirst(),{functionName: "shiftThisMonth",parameters: params},"recurAt4amMonthly");
+    push(fourAmOnTheFirst(),{functionName: "shiftThisMonth",parameters: params},signature);
 }
 
 /***** TRIGGER on updated card ******/
