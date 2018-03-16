@@ -182,13 +182,16 @@ function computeListTotal(board_id,list_name)
 function computeListTotalById(list)
 {
     var list_name = list.name();
-    var num_exp = new RegExp("(.+) \\([0-9]+\\)","gi")
+    var num_exp = new RegExp("(.+) \\([0-9]+\\)","i")
 
     try
     {
-        var list_base_name = num_exp.exec(list_name)[1];
-        var cards = list.countCards();
-        list.rename(list_base_name+" ("+cards+")");
+        if(num_exp.test(list_name))
+        {
+          var list_base_name = num_exp.exec(list_name)[1];
+          var cards = list.countCards();
+          list.rename(list_base_name+" ("+cards+")");
+        }
     }
 
     catch(e)
