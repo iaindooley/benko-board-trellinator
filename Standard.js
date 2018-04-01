@@ -108,21 +108,28 @@ function updateCardDispatch(notification,signature)
         scheduleDueDateReminder(notification,signature);
     //Indicates a card was moved
     else if(notification.action.data.listAfter)
-    {
-        //Update the list heading totals
-        computeListTotals(notification,signature);
         //Check if the card was moved into Follow Up and add a due date if so
         remindToFollowUp(notification.action.display.entities.card,notification.action.data.listAfter,notification,signature);
-    }
+}
+
+function listTotalUpdates(notification)
+{
+    if(notification.action.data.listAfter)
+        //Update the list heading totals
+        computeListTotals(notification,signature);
     //Update totals if list changed
     else
-        computeListTotalById(new List(notification.action.data.list));
+        computeListTotalById(new List(notification.action.data.list));  
+}
+
+function globalComputeListTotalsForCardChanges(notification,signature)
+{
+    computeListTotalById(new List(notification.action.data.list));
 }
 
 /***** TRIGGER on created or copied card *****/
 function computeListTotalsForCardChanges(notification,signature)
 {
-    computeListTotalById(new List(notification.action.data.list));
     remindToFollowUp(notification.action.display.entities.card,notification.action.data.list,notification,signature);
 }
 
