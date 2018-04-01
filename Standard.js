@@ -112,7 +112,7 @@ function updateCardDispatch(notification,signature)
         remindToFollowUp(notification.action.display.entities.card,notification.action.data.listAfter,notification,signature);
 }
 
-function listTotalUpdates(notification)
+function listTotalUpdates(notification,signature)
 {
     if(notification.action.data.listAfter)
         //Update the list heading totals
