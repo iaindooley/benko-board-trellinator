@@ -106,15 +106,24 @@ copying labels and members and find card with id "{triggercardid}" and remove la
 
         if(parts = new RegExp("Split (.*)").exec(added_label.name()))
         {
-            var list = board.findOrCreateList(notif.card().name()+" Split: "+parts[1]);
-            var params = {
-                          idLabels: notif.card().labels().transform(function(label)
-                                    {
-                                        return label.data.id;
-                                    }).implodeValues(",")
-                         };
-            notif.card().checklist(parts[1]).convertIntoLinkedCards(list,params);
-            notif.card().removeLabel(added_label);
+            try
+            {
+                var cl = notif.card().checklist(parts[1])
+                var list = board.findOrCreateList(notif.card().name()+" Split: "+parts[1]);
+                var params = {
+                              idLabels: notif.card().labels().transform(function(label)
+                                        {
+                                            return label.data.id;
+                                        }).implodeValues(",")
+                             };
+                cl.convertIntoLinkedCards(list,params);
+                notif.card().removeLabel(added_label);
+            }
+            
+            catch(e)
+            {
+                writeInfo_("Checklist not found for: "+parts[1]+" "+e);
+            }
         }
     }
 
