@@ -8,12 +8,12 @@ function checkOffArchivedCard(notification)
     {
         var arched = notif.archivedCard();
         arched.label(new RegExp("(Benko|HoZ) Linked Card"));
-        arched.cardsLinkedInAttachments().first().checkItemByName(notif.card().link());
+        arched.cardsLinkedInAttachments().first().checkItemByName(new RegExp(".*: "+notif.card().link()));
     }
     
     catch(e)
     {
-        writeInfo_(e);
+        writeInfo_("Did not check off archived card: "+e);
     }
 }
 
