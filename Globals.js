@@ -56,7 +56,7 @@ function checkOffSplittedCard(notification)
 
     catch(e)
     {
-        writeInfo_(e);
+        writeInfo_("Did not archive splitted card: "+e);
     }
 }
 
