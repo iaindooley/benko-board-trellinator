@@ -171,12 +171,21 @@ function computeListTotals(notification,signature)
 /****** 3. .Make due dates Priority *****/
 function remindOnDueDate(params,signature)
 {
-    var card = new Card(params.card);
-    card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
-    computeListTotal(params.board.id,"Priority");
+    try
+    {
+        var card = new Card(params.card);
+        card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
+        computeListTotal(params.board.id,"Priority");
   
-    if(card.labels().filterByName("Remind").length())
-        card.postComment("@"+params.board.name+" you asked me to remind you about this");
+
+        if(card.labels().filterByName("Remind").length())
+            card.postComment("@"+params.board.name+" you asked me to remind you about this");
+    }
+  
+    catch(e)
+    {
+        writeInfo_("No labels present with name Remind: "+e);
+    }
 }
 
 /******** Tools and Utilities *******/
