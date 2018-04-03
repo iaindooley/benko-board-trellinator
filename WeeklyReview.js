@@ -77,3 +77,25 @@ function markAsComplete(notification)
         writeInfo_("No due date was marked as complete: "+e);
     }
 }
+
+/* Update card */
+function addChecklist(notification)
+{
+    var notif = new Notification(notification);
+    
+    try
+    {
+        if(new RegExp("Doing.*").test(notif.listCardWasMovedTo().name()))
+        {
+            notif.board()
+                 .list("Info")
+                 .card("Checklist Templates")
+                 .copyChecklist("HoZ Health Check",notif.card());
+        }
+    }
+    
+    catch(e)
+    {
+        writeInfo_("Card not moved to Doing list: "+e);
+    }
+}
