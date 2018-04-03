@@ -15,6 +15,7 @@ eval(murphy.load(__dirname,"../../trellinator-libs/TestConnector.js"));
 eval(murphy.load(__dirname,"../../trellinator-libs/IterableCollection.js"));
 eval(murphy.load(__dirname,"../../trellinator/Trigger.js"));
 eval(murphy.load(__dirname,"due_date_added.js"));
+eval(murphy.load(__dirname,"due_date_completed.js"));
 //////////////////////////////////////////////////////
 TestConnector.test_base_dir   = __dirname;
 TestConnector.live_key      = process.argv[2];
@@ -26,6 +27,7 @@ var pushed_params = null;
 scheduleLapsedReminder(due_date_added,"somesig");
 actionLapsedReminder(pushed_params.parameters,"somesig");
 weeklyCatchUp({id: "5a938de4e0c2896bd94c7434"},"somesig");
+markAsComplete(due_date_completed);
 
 function push(date,params,sig)
 {

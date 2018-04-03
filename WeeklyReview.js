@@ -61,3 +61,19 @@ function weeklyCatchUp(board,signature)
                 parameters: board};
     push(new Date().next("Friday","9:00"),func,signature);
 }
+
+/* Update card */
+function markAsComplete(notification)
+{
+    var notif = new Notification(notification);
+    
+    try
+    {
+        notif.cardDueDateWasCompletedOn().moveTo({list: "Done",position: "top"});
+    }
+    
+    catch(e)
+    {
+        writeInfo_("No due date was marked as complete: "+e);
+    }
+}
