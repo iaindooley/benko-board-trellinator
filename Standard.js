@@ -103,34 +103,72 @@ function shiftThisMonth(params,signature)
 //updateCard
 function updateCardDispatch(notification,signature)
 {
-    //Indicates a due date was added to the card
-    if(notification.action.data.card.due)
-        scheduleDueDateReminder(notification,signature);
-    //Indicates a card was moved
-    else if(notification.action.data.listAfter)
-        //Check if the card was moved into Follow Up and add a due date if so
-        remindToFollowUp(notification.action.display.entities.card,notification.action.data.listAfter,notification,signature);
+    var notif = new Notification(notification);
+
+    try
+    {
+        //Indicates a due date was added to the card
+        if(notification.action.data.card.due)
+            scheduleDueDateReminder(notification,signature);
+        //Indicates a card was moved
+        else
+            //Check if the card was moved into Follow Up and add a due date if so
+            remindToFollowUp(notif.card(),notif.listAfter(),notification,signature);
+    }
+    
+    catch(e)
+    {
+        writeInfo_("Nothing to update: "+e);
+    }
 }
 
 function listTotalUpdates(notification,signature)
 {
-    if(notification.action.data.listAfter)
-        //Update the list heading totals
-        computeListTotals(notification,signature);
-    //Update totals if list changed
-    else
-        computeListTotalById(new List(notification.action.data.list));  
+    var notif = new Notification(notification);
+
+    try
+    {
+        if(notif.listAfter())
+            //Update the list heading totals
+            computeListTotals(notification,signature);
+        //Update totals if list changed
+        else
+            computeListTotalById(notif.updatedList());
+    }
+    
+    catch(e)
+    {
+        writeInfo_("List totals not updated: "+e);
+    }
 }
 
 function globalComputeListTotalsForCardChanges(notification,signature)
 {
-    computeListTotalById(new List(notification.action.data.list));
+    try
+    {
+        computeListTotalById(new Notification(notification).updatedList());
+    }
+    
+    catch(e)
+    {
+        writeInfo_("No updated list: "+e);
+    }
 }
 
 /***** TRIGGER on created or copied card *****/
 function computeListTotalsForCardChanges(notification,signature)
 {
-    remindToFollowUp(notification.action.display.entities.card,notification.action.data.list,notification,signature);
+    var notif = new Notification(notification);
+
+    try
+    {
+        remindToFollowUp(notif.card(),notif.updatedList(),notification,signature);
+    }
+    
+    catch(e)
+    {
+        writeInfo_("No updated list: "+e);
+    }
 }
 
 /***** 1. .Remind on due date ********/
@@ -162,8 +200,18 @@ function remindToFollowUp(card,list,notification,signature)
 /********* X. List Totals (DashCards Replacement) ***********/
 function computeListTotals(notification,signature)
 {
-    computeListTotalById(new List(notification.action.data.listAfter));
-    computeListTotalById(new List(notification.action.data.listBefore));
+    var notif = new Notification(notification);
+    
+    try
+    {
+        computeListTotalById(notif.listAfter());
+        computeListTotalById(notif.listBefore());
+    }
+    
+    catch(e)
+    {
+        writeInfo_("No totals to compute: "+e);
+    }
 }
 
 //Called by Trigger on the due date

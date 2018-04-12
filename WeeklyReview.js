@@ -55,7 +55,7 @@ function weeklyCatchUp(board,signature)
     });
     var func = {functionName: "weeklyCatchUp",
                 parameters: board};
-    push(new Date().next("Friday","9:00"),func,signature);
+    push(new Date().next("Friday").at("9:00"),func,signature);
 }
 
 /* Update card */
