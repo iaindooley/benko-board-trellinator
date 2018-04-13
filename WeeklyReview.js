@@ -44,17 +44,13 @@ function weeklyCatchUp(board,signature)
         try
         {
             card.label("Recurring");
+            Card.create(board.list("ToDo"),{name: "Hooked on Zero review with Iain and "+card.name()})
+                .postComment(board.cards().findByName("Weekly HoZ Review Template").first().description().replace("USERNAME",card.name()).replace("LINK","https://calendly.com/the-procedure-people/noffs-weekly-hoz-review"))
+                .setDue(Trigger.xDaysFromNow(4));
         }
         
         catch(e)
         {
-            Card.create(board.list("ToDo"),{name: "Hooked on Zero review with Iain and "+card.name()})
-                .postComment("@"+card.name()+" Hi there!\n\n"+
-                             "If you're available Thursday for a meeting at Noffs HQ please tag iaindooley in a comment with the best time.\n\n"+
-                             "Otherwise you can choose a time here that suits you any other day of the week\n\n"+
-                             "https://calendly.com/the-procedure-people/noffs-weekly-hoz-review-via-bluejeans\n\n"+
-                             "Thanks, You have been Trellinated!")
-                .setDue(Trigger.xDaysFromNow(7));
         }
     });
     var func = {functionName: "weeklyCatchUp",
