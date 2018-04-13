@@ -1,20 +1,3 @@
-var master_benko_board_id = "58f36ea57cdd8c5334a1ffc9";
-//MANUALLY INITIALISE THESE - UPDATE THE BOARD ID FIRST
-function recurAt4amDaily()
-{
-    push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: {id: master_benko_board_id}},"recurAt4amDaily");
-}
-
-function recurAtMidnightWeekly()
-{
-    push(thisSunday1159pm(),{functionName: "shiftThisWeek",parameters: {id: master_benko_board_id}},"recurAtMidnightWeekly");
-}
-
-function recurAt4amMonthly(board_id)
-{
-    push(fourAmOnTheFirst(),{functionName: "shiftThisMonth",parameters: {id: master_benko_board_id}},"recurAt4amMonthly");
-}
-
 /***** FUNCTIONS to move priorities over to the left *****/
 function shiftTomorrowToToday(params,signature)
 {
@@ -26,17 +9,6 @@ function shiftTomorrowToToday(params,signature)
     catch(e)
     {
       writeInfo_("Caught exception moving all cards in shiftTomorrowToToday: "+e);
-    }
-  
-    try
-    {
-        computeListTotal(params.id,"Tomorrow");
-        computeListTotal(params.id,"If I have time today");
-    }
-  
-    catch(e)
-    {
-      writeInfo_("Caught exception computing list totals: "+e);
     }
   
     push(dateFourAmTomorrow(),{functionName: "shiftTomorrowToToday",parameters: params},signature);
@@ -64,10 +36,6 @@ function shiftThisWeek(params,signature)
     {
     }
 
-    //Update the list totals
-    computeListTotal(params.id,"This week");
-    computeListTotal(params.id,"Next week");
-    computeListTotal(params.id,"If I have time today");
     push(thisSunday1159pm(),{functionName: "shiftThisWeek",parameters: params},signature);
 }
 
@@ -92,37 +60,41 @@ function shiftThisMonth(params,signature)
     catch(e)
     {
     }
-    //Update the list totals
-    computeListTotal(params.id,"This month");
-    computeListTotal(params.id,"Next month");
-    computeListTotal(params.id,"If I have time today");
+
     push(fourAmOnTheFirst(),{functionName: "shiftThisMonth",parameters: params},signature);
 }
 
-/***** TRIGGER on updated card ******/
-//updateCard
-function updateCardDispatch(notification,signature)
+/***** 1. .Remind on due date ********/
+/****** 3. .Make due dates Priority *****/
+function scheduleDueDateReminder(notification,signature)
 {
     var notif = new Notification(notification);
-
+  
     try
-    {
-        this.cardDueDateWasAddedTo();
-        scheduleDueDateReminder(notification,signature);
+    {      
+        notif.actionOnDueDate("remindOnDueDate",signature);
     }
-    
+  
     catch(e)
     {
-        try
-        {
-            //Check if the card was moved into Follow Up and add a due date if so
-            remindToFollowUp(notif.card(),notif.listAfter(),notification,signature);
-        }
-        
-        catch(e)
-        {
-            writeInfo_("Nothing to update: "+e);
-        }
+        writeInfo_("Due date reminder not scheduled: "+e);
+    }
+}
+
+/***** 2. .Remind to Follow up *******/
+function remindToFollowUp(notification,signature)
+{
+    try
+    {
+        var notif = new Notification(notification);
+        var list = notif.listCardWasAddedTo(new RegExp("Follow up.*"));
+        var remind_on = new Date().addDays(3);
+        notif.card().setDue(remind_on);
+    }
+  
+    catch(e)
+    {
+        writeInfo_("Not reminding to follow up: "+e);   
     }
 }
 
@@ -172,32 +144,6 @@ function computeListTotalsForCardChanges(notification,signature)
     catch(e)
     {
         writeInfo_("No updated list: "+e);
-    }
-}
-
-/***** 1. .Remind on due date ********/
-/****** 3. .Make due dates Priority *****/
-function scheduleDueDateReminder(notification,signature)
-{
-    var trigger_signature = signature+notification.action.display.entities.card.id;
-    clear(trigger_signature);
-    var params = {board: notification.model,card: notification.action.display.entities.card};
-    push(new Date(notification.action.data.card.due),{functionName: "remindOnDueDate",parameters: params},trigger_signature);
-}
-
-/***** 2. .Remind to Follow up *******/
-function remindToFollowUp(card,list,notification,signature)
-{
-    var follow_up_regex = new RegExp("Follow up \\([0-9]+\\)");
-
-    if(follow_up_regex.test(list.name()))
-    {
-        var remind_on = new Date().addDays(3);
-        card.setDue(remind_on);
-        var trigger_signature = signature+card.data.id;
-        clear(trigger_signature);
-        var params = {board: notification.model,card: notification.action.display.entities.card};
-        push(new Date(remind_on),{functionName: "remindOnDueDate",parameters: params},trigger_signature);
     }
 }
 
