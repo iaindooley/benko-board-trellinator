@@ -107,18 +107,22 @@ function updateCardDispatch(notification,signature)
 
     try
     {
-        //Indicates a due date was added to the card
-        if(notification.action.data.card.due)
-            scheduleDueDateReminder(notification,signature);
-        //Indicates a card was moved
-        else
-            //Check if the card was moved into Follow Up and add a due date if so
-            remindToFollowUp(notif.card(),notif.listAfter(),notification,signature);
+        this.cardDueDateWasAddedTo();
+        scheduleDueDateReminder(notification,signature);
     }
     
     catch(e)
     {
-        writeInfo_("Nothing to update: "+e);
+        try
+        {
+            //Check if the card was moved into Follow Up and add a due date if so
+            remindToFollowUp(notif.card(),notif.listAfter(),notification,signature);
+        }
+        
+        catch(e)
+        {
+            writeInfo_("Nothing to update: "+e);
+        }
     }
 }
 
