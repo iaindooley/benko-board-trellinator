@@ -45,7 +45,7 @@ function weeklyCatchUp(board,signature)
         {
             card.label("Recurring");
             Card.create(board.list("ToDo"),{name: "Hooked on Zero review with Iain and "+card.name()})
-                .postComment(board.cards().findByName("Weekly HoZ Review Template").first().description().replace("USERNAME",card.name()).replace("LINK","https://calendly.com/the-procedure-people/noffs-weekly-hoz-review"))
+                .postComment(board.cards().findByName("Weekly HoZ Review Template").first().description().replace("USERNAME",card.name()))
                 .setDue(Trigger.xDaysFromNow(4));
         }
         
