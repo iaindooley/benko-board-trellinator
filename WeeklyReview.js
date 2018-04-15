@@ -6,7 +6,7 @@ function scheduleLapsedReminder(notification,signature)
 Update your HoZ review lapse notifications to add to card instead of mention so that you can archive the mentions separately from the lapses*/
     try
     {
-        new Notification(notification).actionOnDueDate(actionLapsedReminder,signature);
+        new Notification(notification).actionOnDueDate("actionLapsedReminder",signature);
     }
 
     catch(e)
