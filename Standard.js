@@ -202,9 +202,13 @@ function computeListTotalById(list)
     {
         if(num_exp.test(list_name))
         {
-          var list_base_name = num_exp.exec(list_name)[1];
-          var cards = list.countCards();
-          list.rename(list_base_name+" ("+cards+")");
+          var list_parts = num_exp.exec(list_name);
+          var list_base_name = list_parts[1];
+          var list_count = parseInt(list_parts[2]);
+          var cards = parseInt(list.countCards());
+          
+          if(cards != list_count)
+            list.rename(list_base_name+" ("+cards+")");
         }
     }
 
