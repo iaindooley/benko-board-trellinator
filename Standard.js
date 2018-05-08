@@ -72,7 +72,7 @@ function scheduleDueDateReminder(notification,signature)
   
     try
     {      
-        notif.actionOnDueDate("remindOnDueDate",signature);
+        notif.actionOnDueDateAdded("remindOnDueDate",signature);
     }
   
     catch(e)
