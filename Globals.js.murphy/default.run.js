@@ -22,8 +22,6 @@ eval(murphy.load(__dirname,"./split_label_added.js"));
 TestConnector.test_base_dir   = __dirname;
 TestConnector.live_key      = process.argv[2];
 TestConnector.live_token    = process.argv[3];
-var NoffsParameters = function(){};
-NoffsParameters.trellinator_username = "trellinatordev";
 
 checkOffArchivedCard(archived_card);
 copyComment(comment_added);

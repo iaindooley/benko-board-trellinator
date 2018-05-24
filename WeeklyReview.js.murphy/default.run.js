@@ -20,8 +20,6 @@ eval(murphy.load(__dirname,"due_date_completed.js"));
 TestConnector.test_base_dir   = __dirname;
 TestConnector.live_key      = process.argv[2];
 TestConnector.live_token    = process.argv[3];
-var NoffsParameters = function(){};
-NoffsParameters.trellinator_username = "trellinatordev";
 var pushed_params = null;
 
 scheduleLapsedReminder(due_date_added,"somesig");
