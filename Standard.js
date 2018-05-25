@@ -77,7 +77,8 @@ function scheduleDueDateReminder(notification,signature)
   
     catch(e)
     {
-        writeInfo_("Due date reminder not scheduled: "+e);
+        notif.listCardWasCreatedIn();
+        notif.actionOnDueDate("remindOnDueDate",signature);
     }
 }
 
