@@ -179,7 +179,7 @@ function remindOnDueDate(params,signature)
   
 
         if(card.labels().filterByName("Remind").length())
-            card.postComment("@"+params.board.name+" you asked me to remind you about this");
+            card.postComment("@"+notif.member().name()+" you asked me to remind you about this");
     }
   
     catch(e)
