@@ -176,7 +176,7 @@ function remindOnDueDate(params,signature)
         var card = notif.card();
         card.moveTo({list: new RegExp("Priority \\([0-9]+\\)"),position:"top"});
       
-        if(card.labels().filterByName("Remind").length())
+        if(card.labels().findByName("Remind").length())
             card.postComment("@"+notif.board().name()+" you asked me to remind you about this");
       
         computeListTotal(notif.board().data.id,"Priority");
