@@ -1,9 +1,11 @@
 /***** FUNCTIONS to move priorities over to the left *****/
 function shiftTomorrowToToday(params,signature)
 {
+    var board = new Board(params);
+
     try
     {
-        new Board(params).moveAllCards({from: new RegExp("Tomorrow \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+        board.moveAllCards(board.list(RegExp("Tomorrow \\([0-9]+\\)")),board.list(new RegExp("If I have time today \\([0-9]+\\)")));
     }
   
     catch(e)
@@ -16,10 +18,12 @@ function shiftTomorrowToToday(params,signature)
 
 function shiftThisWeek(params,signature)
 {
+    var board = new Board(params);
+
     try
     {
         //Move from This week to if I have time today
-        new Board(params).moveAllCards({from: new RegExp("This week \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+        board.moveAllCards(board.liset(new RegExp("This week \\([0-9]+\\)")),board.list(new RegExp("If I have time today \\([0-9]+\\)")));
     }
   
     catch(e)
@@ -29,7 +33,7 @@ function shiftThisWeek(params,signature)
     try
     {
         //Move from Next week to This week
-        new Board(params).moveAllCards({from: new RegExp("Next week \\([0-9]+\\)"),to: new RegExp("This week \\([0-9]+\\)")});
+        board.moveAllCards(board.list(new RegExp("Next week \\([0-9]+\\)")),board.list(new RegExp("This week \\([0-9]+\\)")));
     }
   
     catch(e)
@@ -41,10 +45,12 @@ function shiftThisWeek(params,signature)
 
 function shiftThisMonth(params,signature)
 {
+    var board = new Board(params);
+
     try
     {
         //Move from This month to if I have time today
-        new Board(params).moveAllCards({from: new RegExp("This month \\([0-9]+\\)"),to: new RegExp("If I have time today \\([0-9]+\\)")});
+        board.moveAllCards(board.list(new RegExp("This month \\([0-9]+\\)")),board.list(new RegExp("If I have time today \\([0-9]+\\)")));
     }
   
     catch(e)
@@ -54,7 +60,7 @@ function shiftThisMonth(params,signature)
     try
     {
         //Move from Next month to This month
-        new Board(params).moveAllCards({from: new RegExp("Next month \\([0-9]+\\)"),to: new RegExp("This month \\([0-9]+\\)")});
+        board.moveAllCards(board.list(new RegExp("Next month \\([0-9]+\\)")),board.list(new RegExp("This month \\([0-9]+\\)")));
     }
   
     catch(e)
