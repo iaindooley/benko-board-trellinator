@@ -27,7 +27,34 @@ function copyComment(notification)
     {
         var comment = notif.commentAddedToCard();
         notif.card().label(new RegExp("(Benko|HoZ) Linked Card"));
-        notif.card().cardsLinkedInAttachments().first().postComment(notif.member().name()+" said: "+comment.text());
+
+        try
+        {
+            notif.card().cardsLinkedInAttachments().each(function(card)
+            {
+                try
+                {
+                    card.label("Benko Master");
+
+                    card.checklist("Linked Cards").items().each(function(item)
+                    {
+                        if(item.name().indexOf(notif.card().link()) > -1)
+                            throw card;
+                    });
+                }
+                
+                catch(e)
+                {
+                    Notification.expectException(InvalidDataException,e);
+                }
+            });
+        }
+        
+        catch(e)
+        {
+            Notification.expectException(Card,e);
+            e.postComment(notif.member().name()+" said: "+comment.text().replace("@",""));
+        }
     }
     
     catch(e)
