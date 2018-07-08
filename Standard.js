@@ -23,7 +23,7 @@ function shiftThisWeek(params,signature)
     try
     {
         //Move from This week to if I have time today
-        board.moveAllCards(board.liset(new RegExp("This week \\([0-9]+\\)")),board.list(new RegExp("If I have time today \\([0-9]+\\)")));
+        board.moveAllCards(board.list(new RegExp("This week \\([0-9]+\\)")),board.list(new RegExp("If I have time today \\([0-9]+\\)")));
     }
   
     catch(e)
