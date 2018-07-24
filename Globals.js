@@ -15,6 +15,9 @@ function copyComment(notification)
 /* When a comment is added to a card with label "HoZ Linked Card" find the first card linked in the attachments and add a comment "{username} said: {commenttext}" */
     var notif = new Notification(notification);
     
+    if(!notif.member().notTrellinator())
+      return false;
+  
     var comment = notif.commentAddedToCard();
     notif.card().label(new RegExp("(Benko|HoZ) Linked Card"));
 
