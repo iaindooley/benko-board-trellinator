@@ -116,7 +116,7 @@ copying labels and members and find card with id "{triggercardid}" and remove la
         
         catch(e)
         {
-            Notification.exceptionException(InvalidDataException,e);
+            Notification.expectException(InvalidDataException,e);
             notif.replyToMember("There was no checklist named: "+parts[1]);
         }
     }
