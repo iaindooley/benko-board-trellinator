@@ -102,7 +102,7 @@ copying labels and members and find card with id "{triggercardid}" and remove la
     {
         try
         {
-            var cl = notif.card().checklist(parts[1])
+            var cl = notif.card().removeLabel(added_label).checklist(parts[1]);
             var list = board.findOrCreateList(notif.card().name()+" Split: "+parts[1]);
             var params = {
                           idLabels: notif.card().labels().transform(function(label)
@@ -111,7 +111,6 @@ copying labels and members and find card with id "{triggercardid}" and remove la
                                     }).implodeValues(",")
                          };
             cl.convertIntoLinkedCards(list,params);
-            notif.card().removeLabel(added_label);
         }
         
         catch(e)
