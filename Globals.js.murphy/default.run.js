@@ -6,6 +6,7 @@ eval(murphy.load(__dirname,"../../../apps/trellinator/Trigger.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator/TrigTest.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Board.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Card.js")); 
+eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Attachment.js")); 
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/CheckItem.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Checklist.js"));
 eval(murphy.load(__dirname,"../../../apps/trellinator-libs/Comment.js"));
