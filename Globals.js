@@ -53,15 +53,8 @@ function copyComment(notification)
 /* update card */
 function checkOffSplittedCard(notification)
 {
-    var notif       = new Notification(notification);
-    var split_regex = "Split (.*)";
-    
-/* When a card with label "Split {*}" is archived, find the card mentioned in the description and check item "{triggercardlink}" in checklist "{labelwildcard1}" */
-    if(
-        (arch = notif.archivedCard()) && 
-        (arch.label(new RegExp(split_regex)))
-      )
-        arch.cardLinkedInDescription().checkItemByName(notif.card().link());
+  var notif = new Notification(notification);
+  notif.archivedCard().cardLinkedInDescription().checkItemByName(notif.card().link());    
 }
 
 /* add label to card */
