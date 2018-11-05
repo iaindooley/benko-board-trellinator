@@ -1,3 +1,8 @@
+function addNewBenkoBoardUserToGlobalCommandGroup()
+{
+  Trellinator.addBoardToGlobalCommandGroup(new Trellinator().board("NAME"),"Benko Boards");
+}
+
 function createNewBenkoBoardInstanceForTrellinator()
 {
   var source = DriveApp.getFolderById("1boB-KXGYQPAoXWHQN_ZyoB7zqIKrlt4T");
