@@ -1,3 +1,30 @@
+function createNewBenkoBoardInstanceForTrellinator()
+{
+  var source = DriveApp.getFolderById("1boB-KXGYQPAoXWHQN_ZyoB7zqIKrlt4T");
+  var target = DriveApp.createFolder("Benko Board by The Procedure People");
+  createNewBenkoBoardInstanceForTrellinator.copyFolder(source,target);
+  source.removeEditor(Session.getActiveUser().getEmail());
+  target.getFoldersByName("Code").next().addEditor("iain.dooley@theprocedurepeople.com");
+}
+
+createNewBenkoBoardInstanceForTrellinator.copyFolder = function(source,target)
+{
+  var folders = source.getFolders();
+  var files   = source.getFiles();
+  
+  while(files.hasNext()) {
+    var file = files.next();
+    file.makeCopy(file.getName(), target);
+  }
+  
+  while(folders.hasNext()) {
+    var subFolder = folders.next();
+    var folderName = subFolder.getName();
+    var targetFolder = target.createFolder(folderName);
+    createNewBenkoBoardInstanceForTrellinator.copyFolder(subFolder, targetFolder);
+  }  
+}
+
 /***** FUNCTIONS to move priorities over to the left *****/
 function shiftTomorrowToToday(params,signature)
 {
