@@ -27,7 +27,7 @@ eval(murphy.load(__dirname,"notifications/default.run.js/comment_added.js"));
 TestConnector.test_base_dir = __dirname;
 Trellinator.username = "";
 /*OPTIONAL
-TestConnector.fake_now = new Date("2001-01-01");
+TestConnector.fake_now = new Date("2001-01-01T00:00:00.000Z");
 TestConnector.prefix = "actual";
 ExecutionQueue.fake_push = function(name,params,signature,time)
 {
