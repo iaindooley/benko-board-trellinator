@@ -113,3 +113,11 @@ copying labels and members and find card with id "{triggercardid}" and remove la
         }
     }
 }
+
+function pingOnAlert(notification)
+{
+    var notif = new Notification(notification);
+    
+    if(/🤖ALERT🤖 .*/.test(notif.addedComment().text()))
+        notif.replyToMember("please check out the alert below");
+}
