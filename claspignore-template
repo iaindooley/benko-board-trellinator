@@ -1,3 +1,6 @@
 !apps/benko-board-trellinator/Standard.js
 !apps/benko-board-trellinator/Globals.js
 !apps/benko-board-trellinator/WeeklyReview.js
+!apps/benko-board-trellinator/standard2/DueDate.js
+!apps/benko-board-trellinator/standard2/Events.js
+!apps/benko-board-trellinator/standard2/Scheduled.js
