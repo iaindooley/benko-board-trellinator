@@ -6,7 +6,19 @@ function checkOffArchivedCard(notification)
 /* When a card with label "HoZ Linked Card" is archived find the first card linked in the attachments and check item "{boardname}: {triggercardlink}" */
     var arched = notif.archivedCard();
     arched.label(new RegExp("(Benko|HoZ) Linked Card"));
-    arched.cardsLinkedInAttachments().first().checkItemByName(new RegExp(".*: "+notif.card().link()));
+
+    try
+    {
+        var linked = arched.cardsLinkedInAttachments().first();
+
+        if(linked.id())
+            linked.checkItemByName(new RegExp(".*: "+notif.card().link()));
+    }
+    
+    catch(e)
+    {
+        Trellinator.log("Could not check off archived card: "+e);
+    }
 }
 
 /* add comment to card */
@@ -46,7 +58,16 @@ function copyComment(notification)
     catch(e)
     {
         Notification.expectException(Card,e);
-        e.postComment(notif.member().name()+" said: "+comment.text().replace("@",""));
+        
+        try
+        {
+            e.postComment(notif.member().name()+" said: "+comment.text().replace("@",""));
+        }
+        
+        catch(e)
+        {
+            Trellinator.log("Could not copy comment: "+e);
+        }
     }
 }
 
@@ -54,7 +75,16 @@ function copyComment(notification)
 function checkOffSplittedCard(notification)
 {
   var notif = new Notification(notification);
-  notif.archivedCard().cardLinkedInDescription().checkItemByName(notif.card().link());    
+  
+  try
+  {
+      notif.archivedCard().cardLinkedInDescription().checkItemByName(notif.card().link());    
+  }
+  
+  catch(e)
+  {
+      Trellinator.log("Could not check off splitted card: "+e);
+  }
 }
 
 /* add label to card */
