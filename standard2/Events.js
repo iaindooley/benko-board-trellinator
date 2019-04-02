@@ -13,7 +13,6 @@ function moveCardToAnotherBoardFromBenkoBoard(notification)
     
     if(parts = /Board: (.+)\nList: (.+)/.exec(label.card().board().list("Move to Board").card(label.name()).description()))
     {
-      Logger.log(parts);
         label.card().moveToList(new Trellinator().board(new RegExp(parts[1]+".*","i")).list(new RegExp(parts[2]+".*","i")));
     }
     
