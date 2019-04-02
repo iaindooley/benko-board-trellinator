@@ -10,6 +10,9 @@ move the card to that list on that board
 function moveCardToAnotherBoardFromBenkoBoard(notification)
 {
     var label = new Notification(notification).addedLabel();
+  
+  if(!label.name().trim())
+    throw new InvalidActionException("Don't allow empty labels");
     
     if(parts = /Board: (.+)\nList: (.+)/.exec(label.card().board().list("Move to Board").card(label.name()).description()))
     {
