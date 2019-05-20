@@ -143,30 +143,13 @@ function listTotalUpdates(notification,signature)
 
     try
     {
-        if(notif.listAfter())
-            //Update the list heading totals
-            computeListTotals(notification,signature);
-        //Update totals if list changed
-        else
-            computeListTotalById(notif.updatedList());
+      notif.listAfter();
+      computeListTotals(notification,signature);
     }
     
     catch(e)
     {
-        writeInfo_("List totals not updated: "+e);
-    }
-}
-
-function globalComputeListTotalsForCardChanges(notification,signature)
-{
-    try
-    {
-        computeListTotalById(new Notification(notification).updatedList());
-    }
-    
-    catch(e)
-    {
-        writeInfo_("No updated list: "+e);
+      computeListTotalById(notif.updatedList());
     }
 }
 
@@ -238,23 +221,15 @@ function computeListTotalById(list)
     var list_name = list.name();
     var num_exp = new RegExp("(.+) \\([0-9]+\\)","i")
 
-    try
+    if(num_exp.test(list_name))
     {
-        if(num_exp.test(list_name))
-        {
-          var list_parts = num_exp.exec(list_name);
-          var list_base_name = list_parts[1];
-          var list_count = parseInt(list_parts[2]);
-          var cards = parseInt(list.countCards());
-          
-          if(cards != list_count)
-            list.rename(list_base_name+" ("+cards+")");
-        }
-    }
-
-    catch(e)
-    {
-        writeInfo_("Error computing list total: "+e);
+      var list_parts = num_exp.exec(list_name);
+      var list_base_name = list_parts[1];
+      var list_count = parseInt(list_parts[2]);
+      var cards = parseInt(list.countCards());
+      
+      if(cards != list_count)
+        list.rename(list_base_name+" ("+cards+")");
     }
 }
 
