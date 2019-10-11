@@ -15,5 +15,5 @@ function scheduleMoveCardToBenkoBoardInbox(notification,signature)
 function actionMoveCardToBenkoBoardInbox(card)
 {
     var card = new Card(card);
-    card.moveToList(card.board().list(/Inbox.*/),"top");
+    card.moveToList(card.board().list(/If I have time today.*/),"top");
 }
