@@ -61,7 +61,7 @@ function copyComment(notification)
         
         try
         {
-            e.postComment(notif.member().name()+" said: "+comment.text().replace("@",""));
+            e.postComment(notif.member().name()+" said: "+comment.text().replaceAll("@","").replaceAll("🤖ALERT🤖",""));
         }
         
         catch(e)
