@@ -1,24 +1,27 @@
 /* update Card */
 function checkOffArchivedCard(notification)
 {
-    var notif = new Notification(notification);
-
-/* When a card with label "HoZ Linked Card" is archived find the first card linked in the attachments and check item "{boardname}: {triggercardlink}" */
-    var arched = notif.archivedCard();
-    arched.label(new RegExp("(Benko|HoZ) Linked Card"));
-
-    try
-    {
-        var linked = arched.cardsLinkedInAttachments().first();
-
-        if(linked.id())
+  var notif = new Notification(notification);
+  
+  /* When a card with label "HoZ Linked Card" is archived find the first card linked in the attachments and check item "{boardname}: {triggercardlink}" */
+  var arched = notif.archivedCard();
+  arched.label(new RegExp("(Benko|HoZ) Linked Card"));
+  
+  arched.cardsLinkedInAttachments()
+  .each(function(linked)
+        {
+          try
+          {
+            linked.label("Benko Master");
             linked.checkItemByName(new RegExp(".*: "+notif.card().link()));
-    }
-    
-    catch(e)
-    {
-        Trellinator.log("Could not check off archived card: "+e);
-    }
+          }
+          
+          catch(e)
+          {
+            Notification.expectException(InvalidDataException,e);
+          }
+        });
+
 }
 
 /* add comment to card */
