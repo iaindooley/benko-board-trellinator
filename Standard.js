@@ -1,16 +1,24 @@
 function delegateToBoard(notification)
 {
-    var added = new Notification(notification).addedLabel(/delegate/i);
-    var list_split = added.card.board().list("Reference").card("Delegate").description().split("\n");
-    var target_list = new Trellinator().board(list_split[0]).list(list_split[1]);
-    var share = list_split[2];
-    var copy = added
-    .card()
-    .archive()
-    .copyToList(target_list,"top");
-    copy.attachment("View in Gmail").remove();
-    var link = copy.attachment("All Attachments").link();
+  var added = new Notification(notification).addedLabel(/delegate/i);
+  var list_split = added.card().board().list("Reference").card("Delegate").description().split("\n");
+  var target_list = new Trellinator().board(list_split[0]).list(list_split[1]);
+  var share = list_split[2];
+  var copy = added
+  .card()
+  .archive()
+  .copyToList(target_list,"top");
+  copy.attachment("View in Gmail").remove();
+  var link = copy.attachment("All Attachments").link();
+  
+  try
+  {
     DriveApp.getFolderById(new RegExp("https://.*/folders/(.+)").exec(link)[1]).addViewer(share);
+  }
+  
+  catch(e)
+  {
+  }
 }
 
 function addNewBenkoBoardUserToGlobalCommandGroup()
