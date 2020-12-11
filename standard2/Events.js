@@ -24,6 +24,8 @@ function moveCardToAnotherBoardFromBenkoBoard(notification)
 //When a label is added to a card, if a card in the list "Canned Responses" exists with the same name as the label, post the description from the found card as a comment on the trigger card
 function postCannedResponseOnBenkoBoard(notification)
 {
-    var label = new Notification(notification).addedLabel();
+  var label = new Notification(notification).addedLabel();
+  
+  if(label.name())
     label.card().postComment(label.card().board().list("Canned Responses").card(label.name()).description());
 }
