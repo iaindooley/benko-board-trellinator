@@ -28,6 +28,9 @@ function moveDueCardToPriorityAndNotifyIfRequired(notification)
     var card = new Notification(notification).card();
     card.moveToList(card.board().list(/Priority.*/),"top");
     
+    if(card.dueComplete())
+        throw new InvalidActionException("Don't move cards with complete due dates");
+    
     try
     {
         card.label("Remind");
